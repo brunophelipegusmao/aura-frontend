@@ -23,7 +23,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="mt-10 grid gap-8 border-y border-secondary/20 py-8 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-10 grid gap-8 border-t border-secondary/20 pt-8 sm:grid-cols-2 lg:grid-cols-5">
           <div className="min-w-0">
             <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
               Atendimento
@@ -141,7 +141,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-secondary/25 pt-6 text-center text-sm text-muted">
+        <div className="mt-6 border-t border-secondary/25 pt-6 text-center text-sm text-muted">
           <p>© 2026 Aura Activewear. Todos os direitos reservados.</p>
           <p className="mt-2">
             Projeto criado por{" "}

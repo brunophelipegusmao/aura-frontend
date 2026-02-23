@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 type IntroPhase = "hidden" | "loading" | "revealing";
 
-const INTRO_SEEN_KEY = "aura-home-intro-seen";
 const INTRO_HOLD_MS = 850;
 const INTRO_REVEAL_MS = 1000;
 
@@ -39,17 +38,6 @@ export function IntroLoader() {
       };
     }
 
-    const alreadySeen = window.sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
-    if (alreadySeen) {
-      clearRootIntro();
-      hideLoader();
-      return () => {
-        if (showTimer) {
-          window.clearTimeout(showTimer);
-        }
-      };
-    }
-
     root.style.setProperty("--click-x", "0.5");
     root.style.setProperty("--click-y", "0.5");
     root.classList.add("intro-loading");
@@ -64,7 +52,6 @@ export function IntroLoader() {
     }, INTRO_HOLD_MS);
 
     const doneTimer = window.setTimeout(() => {
-      window.sessionStorage.setItem(INTRO_SEEN_KEY, "1");
       clearRootIntro();
       setPhase("hidden");
     }, INTRO_HOLD_MS + INTRO_REVEAL_MS);

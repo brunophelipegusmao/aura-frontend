@@ -25,6 +25,12 @@ body {
   font-family: var(--font-nunito), sans-serif;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .font-roboto {
   font-family: var(--font-roboto), sans-serif;
 }
@@ -32,6 +38,15 @@ body {
 html {
   --origin-x: calc(var(--click-x, 0.5) * 100%);
   --origin-y: calc(var(--click-y, 0.5) * 100%);
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 #swup.transition-reveal {

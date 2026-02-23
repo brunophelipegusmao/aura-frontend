@@ -40,7 +40,7 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SwupProvider />
           <IntroLoader />
-          <main className="min-h-screen bg-accent">
+          <main className="min-h-screen bg-accent pb-20 md:pb-0">
             <Header />
             <div id="swup" className="transition-reveal">
               <Container>{children}</Container>

@@ -15,11 +15,13 @@
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
     "@mui/material-nextjs": "^7.3.8",
+    "@swup/parallel-plugin": "^0.4.0",
     "framer-motion": "^12.34.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-material-ui-carousel": "^3.4.2"
+    "react-material-ui-carousel": "^3.4.2",
+    "swup": "^4.8.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

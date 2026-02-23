@@ -5,6 +5,8 @@ import "./globals.css";
 import { Container } from "@/components/Container";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { SwupProvider } from "@/components/SwupProvider";
+import { IntroLoader } from "@/components/IntroLoader";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -36,9 +38,13 @@ export default function RootLayout({
         className={`${nunito.variable} ${roboto.variable} antialiased bg-accent`}
       >
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+          <SwupProvider />
+          <IntroLoader />
           <main className="min-h-screen bg-accent">
             <Header />
-            <Container>{children}</Container>
+            <div id="swup" className="transition-reveal">
+              <Container>{children}</Container>
+            </div>
             <Footer />
           </main>
         </AppRouterCacheProvider>

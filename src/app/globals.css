@@ -28,3 +28,115 @@ body {
 .font-roboto {
   font-family: var(--font-roboto), sans-serif;
 }
+
+html {
+  --origin-x: calc(var(--click-x, 0.5) * 100%);
+  --origin-y: calc(var(--click-y, 0.5) * 100%);
+}
+
+#swup.transition-reveal {
+  clip-path: circle(150% at 50% 50%);
+}
+
+html.is-changing .transition-reveal {
+  transition: clip-path 1s cubic-bezier(0.5, 0, 0.15, 1);
+}
+
+html.to-circle .transition-reveal {
+  clip-path: circle(75% at 50% 50%);
+}
+
+html.to-circle .transition-reveal.is-next-container {
+  clip-path: circle(0% at var(--origin-x) var(--origin-y));
+}
+
+html.intro-loading #swup.transition-reveal {
+  clip-path: circle(0% at 50% 50%);
+}
+
+html.intro-revealing #swup.transition-reveal {
+  transition: clip-path 1s cubic-bezier(0.5, 0, 0.15, 1);
+  clip-path: circle(150% at 50% 50%);
+}
+
+.intro-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 1;
+  background:
+    radial-gradient(
+      circle at 20% 18%,
+      rgba(255, 255, 255, 0.35) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(110, 99, 168, 0.98) 0%,
+      rgba(143, 132, 198, 0.97) 44%,
+      rgba(199, 193, 230, 0.97) 100%
+    );
+  transition: opacity 240ms ease;
+}
+
+.intro-loader.is-revealing {
+  opacity: 0;
+}
+
+.intro-loader__logo-shell {
+  display: grid;
+  place-items: center;
+  height: 11rem;
+  width: 11rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 24px 50px rgba(11, 11, 15, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.intro-loader__logo {
+  height: auto;
+  width: 8.25rem;
+  filter: drop-shadow(0 10px 18px rgba(11, 11, 15, 0.25));
+  animation: intro-logo-pulse 1.15s ease-in-out infinite alternate;
+}
+
+.intro-loader.is-revealing .intro-loader__logo {
+  animation: none;
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+
+@keyframes intro-logo-pulse {
+  from {
+    transform: translateY(0) scale(0.98);
+  }
+  to {
+    transform: translateY(-4px) scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-changing .transition-reveal,
+  html.intro-revealing #swup.transition-reveal {
+    transition: none;
+  }
+
+  html.intro-loading #swup.transition-reveal,
+  html.intro-revealing #swup.transition-reveal {
+    clip-path: circle(150% at 50% 50%);
+  }
+
+  .intro-loader {
+    display: none;
+  }
+}

@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductCatalogCard } from "@/components/ProductCatalogCard";
 import {
   MotionReveal,
   MotionStagger,
   MotionStaggerItem,
 } from "@/components/motion/Reveal";
-import type { MockColor } from "../../../mock/catalog";
-import { mockProducts } from "../../../mock/catalog";
+import { useStorefrontCatalog } from "@/lib/use-storefront-catalog";
 
 type SortKey =
   | "featured"
@@ -56,18 +56,32 @@ const getDiscountRatio = (price: number, compareAtPrice?: number) => {
 };
 
 export default function ProductsPage() {
+  const products = useStorefrontCatalog();
+  const searchParams = useSearchParams();
+
+  const initialCategoryFilter = searchParams.get("category");
+  const initialCollectionFilter = searchParams.get("collection");
+
   const priceBounds = useMemo(() => {
-    const prices = mockProducts.map((product) => product.price);
+    if (products.length === 0) {
+      return { min: 0, max: 0 };
+    }
+
+    const prices = products.map((product) => product.price);
     return {
       min: Math.floor(Math.min(...prices)),
       max: Math.ceil(Math.max(...prices)),
     };
-  }, []);
+  }, [products]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("featured");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    initialCategoryFilter ? [initialCategoryFilter] : [],
+  );
+  const [selectedCollections, setSelectedCollections] = useState<string[]>(() =>
+    initialCollectionFilter ? [initialCollectionFilter] : [],
+  );
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [specialFilters, setSpecialFilters] = useState<SpecialFilters>({
@@ -90,35 +104,35 @@ export default function ProductsPage() {
   }, [isMobileFiltersOpen]);
 
   const categoryOptions = useMemo<OptionWithCount[]>(() => {
-    const categoryCount = countValues(mockProducts.map((product) => product.category));
+    const categoryCount = countValues(products.map((product) => product.category));
 
     return Object.entries(categoryCount)
       .sort(([a], [b]) => a.localeCompare(b, "pt-BR"))
       .map(([value, count]) => ({ value, count }));
-  }, []);
+  }, [products]);
 
   const collectionOptions = useMemo<OptionWithCount[]>(() => {
-    const collectionCount = countValues(mockProducts.map((product) => product.collection));
+    const collectionCount = countValues(products.map((product) => product.collection));
 
     return Object.entries(collectionCount)
       .sort(([a], [b]) => a.localeCompare(b, "pt-BR"))
       .map(([value, count]) => ({ value, count }));
-  }, []);
+  }, [products]);
 
   const sizeOptions = useMemo<OptionWithCount[]>(() => {
-    const sizes = mockProducts.flatMap((product) => product.sizes);
+    const sizes = products.flatMap((product) => product.sizes);
     const sizeCount = countValues(sizes);
 
     return Object.entries(sizeCount)
       .sort(([a], [b]) => a.localeCompare(b, "pt-BR"))
       .map(([value, count]) => ({ value, count }));
-  }, []);
+  }, [products]);
 
   const colorOptions = useMemo<ColorOption[]>(() => {
     const colorMap = new Map<string, { hex: string; count: number }>();
 
-    mockProducts.forEach((product) => {
-      product.colors.forEach((color: MockColor) => {
+    products.forEach((product) => {
+      product.colors.forEach((color) => {
         const current = colorMap.get(color.name);
         colorMap.set(color.name, {
           hex: color.hex,
@@ -130,21 +144,21 @@ export default function ProductsPage() {
     return Array.from(colorMap.entries())
       .map(([name, value]) => ({ name, hex: value.hex, count: value.count }))
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-  }, []);
+  }, [products]);
 
   const promotionCount = useMemo(() => {
-    return mockProducts.filter(
+    return products.filter(
       (product) => !!product.compareAtPrice && product.compareAtPrice > product.price,
     ).length;
-  }, []);
+  }, [products]);
 
   const newArrivalsCount = useMemo(() => {
-    return mockProducts.filter((product) => product.isNew).length;
-  }, []);
+    return products.filter((product) => product.isNew).length;
+  }, [products]);
 
   const readyToShipCount = useMemo(() => {
-    return mockProducts.filter((product) => product.inStock).length;
-  }, []);
+    return products.filter((product) => product.inStock).length;
+  }, [products]);
 
   const toggleListValue = (
     value: string,
@@ -174,7 +188,7 @@ export default function ProductsPage() {
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
-    const filtered = mockProducts.filter((product) => {
+    const filtered = products.filter((product) => {
       if (
         normalizedSearch &&
         !`${product.name} ${product.reference}`
@@ -253,6 +267,7 @@ export default function ProductsPage() {
         return filtered;
     }
   }, [
+    products,
     searchTerm,
     selectedCategories,
     selectedCollections,

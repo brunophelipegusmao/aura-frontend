@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { label: "Coleções", href: "/collections" },
   { label: "Sobre", href: "/about" },
   { label: "Contato", href: "/contact" },
+  { label: "Admin", href: "/admin" },
 ];
 
 const mobileTabItems = [

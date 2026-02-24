@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -5,7 +7,8 @@ import {
   MotionStagger,
   MotionStaggerItem,
 } from "@/components/motion/Reveal";
-import { mockProducts } from "../../../mock/catalog";
+import { useStorefrontCatalog } from "@/lib/use-storefront-catalog";
+import type { StorefrontProduct } from "@/lib/storefront-catalog";
 
 type CollectionSummary = {
   name: string;
@@ -55,7 +58,7 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const buildCollections = (): CollectionSummary[] => {
+const buildCollections = (products: StorefrontProduct[]): CollectionSummary[] => {
   const map = new Map<
     string,
     {
@@ -68,7 +71,7 @@ const buildCollections = (): CollectionSummary[] => {
     }
   >();
 
-  mockProducts.forEach((product) => {
+  products.forEach((product) => {
     const current = map.get(product.collection);
     if (!current) {
       map.set(product.collection, {
@@ -101,8 +104,13 @@ const buildCollections = (): CollectionSummary[] => {
 };
 
 export default function CollectionsPage() {
-  const collections = buildCollections();
+  const products = useStorefrontCatalog();
+  const collections = buildCollections(products);
   const totalStock = collections.reduce((sum, item) => sum + item.inStock, 0);
+  const averagePrice =
+    products.length > 0
+      ? products.reduce((sum, item) => sum + item.price, 0) / products.length
+      : 0;
 
   return (
     <>
@@ -142,7 +150,7 @@ export default function CollectionsPage() {
                 Produtos
               </p>
               <p className="mt-1 text-lg font-black text-secondary sm:text-2xl">
-                {mockProducts.length}
+                {products.length}
               </p>
             </article>
           </MotionStaggerItem>
@@ -162,10 +170,7 @@ export default function CollectionsPage() {
                 Preco medio
               </p>
               <p className="mt-1 text-sm font-black text-secondary sm:text-base">
-                {currencyFormatter.format(
-                  mockProducts.reduce((sum, item) => sum + item.price, 0) /
-                    mockProducts.length,
-                )}
+                {currencyFormatter.format(averagePrice)}
               </p>
             </article>
           </MotionStaggerItem>
@@ -178,10 +183,15 @@ export default function CollectionsPage() {
         >
           {collections.map((collection) => {
             const copy = collectionCopyMap[collection.name] ?? fallbackCopy;
+            const collectionHref = `/products?collection=${encodeURIComponent(collection.name)}`;
 
             return (
               <MotionStaggerItem key={collection.name}>
-                <article className="group overflow-hidden rounded-3xl border border-secondary/20 bg-paper shadow-[0_12px_32px_rgba(11,11,15,0.1)]">
+                <Link
+                  href={collectionHref}
+                  prefetch={false}
+                  className="group block overflow-hidden rounded-3xl border border-secondary/20 bg-paper shadow-[0_12px_32px_rgba(11,11,15,0.1)]"
+                >
                   <div className="relative aspect-[4/5] overflow-hidden bg-primary-soft/35">
                     <Image
                       src={collection.imageUrl}
@@ -232,15 +242,11 @@ export default function CollectionsPage() {
                       </div>
                     </div>
 
-                    <Link
-                      href="/products"
-                      prefetch={false}
-                      className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-secondary"
-                    >
+                    <span className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-paper transition-colors group-hover:bg-secondary">
                       Ver produtos
-                    </Link>
+                    </span>
                   </div>
-                </article>
+                </Link>
               </MotionStaggerItem>
             );
           })}

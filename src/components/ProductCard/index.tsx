@@ -1,5 +1,6 @@
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Image from "next/image";
+import Link from "next/link";
 
 type ProductCardProps = {
   imageUrl: string;
@@ -7,6 +8,7 @@ type ProductCardProps = {
   title: string;
   reference: string;
   ctaLabel?: string;
+  href?: string;
 };
 
 export function ProductCard({
@@ -15,6 +17,7 @@ export function ProductCard({
   title,
   reference,
   ctaLabel = "EU QUERO",
+  href,
 }: ProductCardProps) {
   return (
     <article className="group relative overflow-hidden rounded-sm bg-paper">
@@ -43,12 +46,22 @@ export function ProductCard({
         <p className="mt-1 w-fit bg-ink/90 px-2 py-1 text-[11px] text-paper/90">
           {reference}
         </p>
-        <button
-          type="button"
-          className="mt-3 w-full bg-ink py-2 text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-secondary"
-        >
-          {ctaLabel}
-        </button>
+        {href ? (
+          <Link
+            href={href}
+            prefetch={false}
+            className="mt-3 block w-full bg-ink py-2 text-center text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-secondary"
+          >
+            {ctaLabel}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className="mt-3 w-full bg-ink py-2 text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-secondary"
+          >
+            {ctaLabel}
+          </button>
+        )}
       </div>
     </article>
   );

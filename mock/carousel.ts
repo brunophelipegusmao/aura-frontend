@@ -7,12 +7,14 @@ export type CarouselItem = {
   title?: string;
   reference?: string;
   ctaLabel?: string;
+  href?: string;
 };
 
 export const heroCarouselItems: CarouselItem[] = mockHeroImages.map((image) => ({
   id: image.id,
   imageUrl: image.url,
   alt: image.alt,
+  href: "/collections",
 }));
 
 export const productCarouselItems: CarouselItem[] = mockProducts.map(

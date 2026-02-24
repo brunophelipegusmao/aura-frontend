@@ -2,12 +2,14 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 type CategoryCardProps = {
   imageUrl: string;
   alt: string;
   title: string;
   subtitle?: string;
+  href?: string;
   index?: number;
 };
 
@@ -16,11 +18,12 @@ export function CategoryCard({
   alt,
   title,
   subtitle,
+  href,
   index = 0,
 }: CategoryCardProps) {
   const isLongTitle = title.length > 6;
 
-  return (
+  const content = (
     <motion.article
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -58,5 +61,15 @@ export function CategoryCard({
         </p>
       ) : null}
     </motion.article>
+  );
+
+  if (!href) {
+    return content;
+  }
+
+  return (
+    <Link href={href} prefetch={false} className="block">
+      {content}
+    </Link>
   );
 }

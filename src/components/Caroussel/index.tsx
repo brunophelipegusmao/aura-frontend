@@ -146,6 +146,7 @@ export default function Caroussel({
                   <CustomCard
                     url={item.imageUrl}
                     alt={item.alt}
+                    href={item.href}
                     mediaHeight={
                       normalizedItemsPerSlide === 1
                         ? mediaHeight

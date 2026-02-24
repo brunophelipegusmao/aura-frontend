@@ -1,9 +1,13 @@
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Image from "next/image";
-import type { MockProduct } from "../../../mock/catalog";
+import Link from "next/link";
+import {
+  buildProductHref,
+  type StorefrontProduct,
+} from "@/lib/storefront-catalog";
 
 type ProductCatalogCardProps = {
-  product: MockProduct;
+  product: StorefrontProduct;
 };
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -11,7 +15,7 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   currency: "BRL",
 });
 
-const getDiscountPercentage = (product: MockProduct) => {
+const getDiscountPercentage = (product: StorefrontProduct) => {
   if (!product.compareAtPrice || product.compareAtPrice <= product.price) {
     return 0;
   }
@@ -114,12 +118,13 @@ export function ProductCatalogCard({ product }: ProductCatalogCardProps) {
           ) : null}
         </div>
 
-        <button
-          type="button"
-          className="w-full rounded-lg bg-ink py-2 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-secondary sm:rounded-md sm:py-2.5 sm:text-sm"
+        <Link
+          href={buildProductHref(product.slug)}
+          prefetch={false}
+          className="block w-full rounded-lg bg-ink py-2 text-center text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-secondary sm:rounded-md sm:py-2.5 sm:text-sm"
         >
           {product.ctaLabel}
-        </button>
+        </Link>
       </div>
     </article>
   );

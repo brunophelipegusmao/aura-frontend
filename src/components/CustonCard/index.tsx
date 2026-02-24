@@ -1,10 +1,12 @@
 import React from "react";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
+import Link from "next/link";
 
 type CustomCardProps = {
   url: string;
   alt: string;
+  href?: string;
   mediaHeight?: {
     xs: number;
     sm: number;
@@ -16,10 +18,11 @@ type CustomCardProps = {
 const CustomCard = ({
   url,
   alt,
+  href,
   mediaHeight = { xs: 280, sm: 420, md: 540 },
   borderRadius = 0,
 }: CustomCardProps) => {
-  return (
+  const content = (
     <Card
       sx={{
         borderRadius,
@@ -38,6 +41,16 @@ const CustomCard = ({
         }}
       />
     </Card>
+  );
+
+  if (!href) {
+    return content;
+  }
+
+  return (
+    <Link href={href} prefetch={false} aria-label={alt} className="block">
+      {content}
+    </Link>
   );
 };
 

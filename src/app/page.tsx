@@ -11,18 +11,21 @@ export default function Home() {
         "/Products/WhatsApp%20Image%202026-02-09%20at%2018.19.48%20(1).jpeg",
       alt: "Categoria Tops",
       title: "TOPS",
+      href: `/products?category=${encodeURIComponent("Top")}`,
     },
     {
       id: "leggings",
       imageUrl: "/Products/WhatsApp%20Image%202026-02-09%20at%2018.19.48.jpeg",
       alt: "Categoria Leggings",
       title: "LEGGINGS",
+      href: `/products?category=${encodeURIComponent("Legging")}`,
     },
     {
       id: "shorts",
       imageUrl: "/Products/WhatsApp%20Image%202026-02-09%20at%2018.19.49.jpeg",
       alt: "Categoria Shorts",
       title: "SHORTS",
+      href: `/products?category=${encodeURIComponent("Short")}`,
     },
     {
       id: "macacoes",
@@ -30,6 +33,7 @@ export default function Home() {
       alt: "Categoria Macacões e Macaquinhos",
       title: "MACACÕES",
       subtitle: "MACAQUINHOS",
+      href: `/products?category=${encodeURIComponent("Macacão")}`,
     },
   ];
 
@@ -68,6 +72,7 @@ export default function Home() {
                 alt={category.alt}
                 title={category.title}
                 subtitle={category.subtitle}
+                href={category.href}
                 index={index}
               />
             ))}

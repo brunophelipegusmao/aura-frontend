@@ -5,6 +5,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,12 +22,14 @@ const navItems: NavItem[] = [
   { label: "Coleções", href: "/collections" },
   { label: "Sobre", href: "/about" },
   { label: "Contato", href: "/contact" },
+  { label: "Carrinho", href: "/cart" },
   { label: "Admin", href: "/admin" },
 ];
 
 const mobileTabItems = [
   { label: "Home", href: "/", icon: HomeRoundedIcon },
   { label: "Produtos", href: "/products", icon: StorefrontRoundedIcon },
+  { label: "Carrinho", href: "/cart", icon: ShoppingBagRoundedIcon },
 ];
 
 const isActivePath = (pathname: string, href: string) => {
@@ -171,7 +174,7 @@ export function Header() {
       ) : null}
 
       <nav className="fixed inset-x-0 bottom-0 z-[10005] border-t border-secondary/20 bg-paper/95 px-2 pb-[max(env(safe-area-inset-bottom),0.35rem)] pt-2 backdrop-blur md:hidden">
-        <div className="mx-auto grid w-full max-w-md grid-cols-3 gap-1">
+        <div className="mx-auto grid w-full max-w-md grid-cols-4 gap-1">
           {mobileTabItems.map((item) => {
             const active = isActivePath(pathname, item.href);
             const Icon = item.icon;

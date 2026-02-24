@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { addToCart } from "@/lib/cart-store";
 import { MotionReveal } from "@/components/motion/Reveal";
 import { buildProductHref } from "@/lib/storefront-catalog";
 import { useStorefrontCatalog } from "@/lib/use-storefront-catalog";
@@ -13,10 +15,16 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 });
 
 export default function ProductDetailsPage() {
+  const router = useRouter();
   const params = useParams<{ slug: string }>();
   const products = useStorefrontCatalog();
 
   const product = products.find((item) => item.slug === params.slug);
+  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] ?? "UN");
+  const [selectedColorName, setSelectedColorName] = useState(
+    product?.colors[0]?.name ?? "Preto",
+  );
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   if (!product) {
     return (
@@ -68,6 +76,31 @@ export default function ProductDetailsPage() {
     `Variacoes de cor: ${colorNames}.`,
     product.inStock ? "Produto disponivel para envio." : "Produto atualmente esgotado.",
   ];
+
+  const resolveSelectedColor = () => {
+    return (
+      product.colors.find((color) => color.name === selectedColorName) ??
+      product.colors[0] ??
+      null
+    );
+  };
+
+  const addCurrentSelectionToCart = () => {
+    const selectedColor = resolveSelectedColor();
+    if (!selectedColor) {
+      return false;
+    }
+
+    addToCart({
+      product,
+      size: selectedSize,
+      colorName: selectedColor.name,
+      colorHex: selectedColor.hex,
+      quantity: selectedQuantity,
+    });
+
+    return true;
+  };
 
   return (
     <>
@@ -122,14 +155,23 @@ export default function ProductDetailsPage() {
                 Tamanhos
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
-                  <span
+                {product.sizes.map((size) => {
+                  const isSelected = selectedSize === size;
+                  return (
+                    <button
                     key={`product-size-${product.id}-${size}`}
-                    className="rounded border border-secondary/20 bg-primary-soft/25 px-3 py-1 text-sm font-semibold text-secondary"
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    className={`rounded border px-3 py-1 text-sm font-semibold transition-colors ${
+                      isSelected
+                        ? "border-secondary bg-secondary text-paper"
+                        : "border-secondary/20 bg-primary-soft/25 text-secondary"
+                    }`}
                   >
                     {size}
-                  </span>
-                ))}
+                  </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -138,15 +180,27 @@ export default function ProductDetailsPage() {
                 Cores
               </p>
               <div className="mt-2 flex flex-wrap gap-2.5">
-                {product.colors.map((color) => (
-                  <div key={`product-color-${product.id}-${color.name}`} className="flex items-center gap-2">
+                {product.colors.map((color) => {
+                  const isSelected = selectedColorName === color.name;
+                  return (
+                    <button
+                    key={`product-color-${product.id}-${color.name}`}
+                    type="button"
+                    onClick={() => setSelectedColorName(color.name)}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors ${
+                      isSelected
+                        ? "border-secondary bg-primary-soft/40"
+                        : "border-secondary/15"
+                    }`}
+                  >
                     <span
                       className="h-5 w-5 rounded-full border border-ink/10"
                       style={{ backgroundColor: color.hex }}
                     />
                     <span className="text-sm text-ink">{color.name}</span>
-                  </div>
-                ))}
+                  </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -159,12 +213,57 @@ export default function ProductDetailsPage() {
               </p>
             </div>
 
+            <div className="rounded-2xl border border-secondary/20 bg-white p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary">
+                Quantidade
+              </p>
+              <div className="mt-2 inline-flex items-center rounded-full border border-secondary/20">
+                <button
+                  type="button"
+                  onClick={() => setSelectedQuantity((current) => Math.max(1, current - 1))}
+                  className="px-3 py-1.5 text-sm font-bold text-secondary"
+                >
+                  -
+                </button>
+                <span className="px-2 text-sm font-semibold text-ink">{selectedQuantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedQuantity((current) => current + 1)}
+                  className="px-3 py-1.5 text-sm font-bold text-secondary"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-2.5">
               <button
                 type="button"
+                onClick={() => {
+                  const itemAdded = addCurrentSelectionToCart();
+                  if (!itemAdded) {
+                    return;
+                  }
+
+                  router.push("/cart");
+                }}
                 className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-secondary"
               >
                 Adicionar ao carrinho
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const itemAdded = addCurrentSelectionToCart();
+                  if (!itemAdded) {
+                    return;
+                  }
+
+                  router.push("/checkout");
+                }}
+                className="rounded-full border border-secondary/25 px-5 py-2.5 text-sm font-semibold text-secondary"
+              >
+                Comprar agora
               </button>
               <Link
                 href="/products"

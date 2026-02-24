@@ -54,6 +54,21 @@ export default function ProductDetailsPage() {
     );
   }
 
+  const colorNames = product.colors.map((color) => color.name).join(", ");
+  const sizeNames = product.sizes.join(", ");
+
+  const presentationText = `${product.name} foi desenvolvido para unir conforto, seguranca e estilo em movimento. A proposta da colecao ${product.collection} valoriza performance com toque macio e modelagem ${product.category.toLowerCase()} para acompanhar seu ritmo de treino e rotina.`;
+
+  const descriptionText = `Esta peca entrega ajuste ao corpo com visual premium e acabamento pensado para uso frequente. Disponivel nos tamanhos ${sizeNames} e nas cores ${colorNames}, e uma opcao versatil para montar looks fitness com identidade Aura.`;
+
+  const technicalHighlights = [
+    "Modelagem com foco em mobilidade e conforto prolongado.",
+    "Acabamento premium para uso em treino e dia a dia.",
+    `Variacoes de tamanho: ${sizeNames}.`,
+    `Variacoes de cor: ${colorNames}.`,
+    product.inStock ? "Produto disponivel para envio." : "Produto atualmente esgotado.",
+  ];
+
   return (
     <>
       <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-8 sm:py-10 md:py-12">
@@ -160,6 +175,40 @@ export default function ProductDetailsPage() {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <article className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm sm:p-6">
+            <p className="font-roboto text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+              Apresentacao do Produto
+            </p>
+            <h2 className="font-roboto mt-2 text-xl font-black uppercase tracking-[0.1em] text-ink">
+              Essencia Aura em Movimento
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted md:text-base">
+              {presentationText}
+            </p>
+          </article>
+
+          <article className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm sm:p-6">
+            <p className="font-roboto text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+              Descricao e Detalhes
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted md:text-base">
+              {descriptionText}
+            </p>
+
+            <ul className="mt-4 space-y-2">
+              {technicalHighlights.map((highlight, index) => (
+                <li
+                  key={`product-highlight-${product.id}-${index}`}
+                  className="rounded-xl border border-secondary/15 bg-primary-soft/15 px-3 py-2 text-sm text-ink"
+                >
+                  {highlight}
+                </li>
+              ))}
+            </ul>
+          </article>
         </div>
 
         {products.length > 1 ? (

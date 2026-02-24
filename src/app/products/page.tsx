@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductCatalogCard } from "@/components/ProductCatalogCard";
@@ -55,7 +55,7 @@ const getDiscountRatio = (price: number, compareAtPrice?: number) => {
   return (compareAtPrice - price) / compareAtPrice;
 };
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const products = useStorefrontCatalog();
   const searchParams = useSearchParams();
 
@@ -828,5 +828,21 @@ export default function ProductsPage() {
         </div>
       ) : null}
     </>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="py-10">
+          <div className="rounded-3xl border border-secondary/20 bg-paper p-6 text-center text-sm text-muted">
+            Carregando produtos...
+          </div>
+        </section>
+      }
+    >
+      <ProductsPageContent />
+    </Suspense>
   );
 }

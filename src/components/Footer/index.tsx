@@ -1,15 +1,18 @@
-import Link from "next/link";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import { MotionReveal } from "@/components/motion/Reveal";
 
 export function Footer() {
   return (
     <footer className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-t border-secondary/25 bg-gradient-to-b from-accent/70 via-primary-soft/40 to-paper text-ink">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(255,255,255,0.7),transparent_42%),radial-gradient(circle_at_88%_80%,rgba(110,99,168,0.16),transparent_44%)]" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-8 pt-14 sm:px-6 lg:px-8">
+      <MotionReveal
+        className="relative mx-auto w-full max-w-6xl px-4 pb-8 pt-14 sm:px-6 lg:px-8"
+        amount={0.08}
+      >
         <div className="text-center">
           <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
             AURA ACTIVEWEAR
@@ -34,7 +37,7 @@ export function Footer() {
               <li>contato@auraactivewear.com.br</li>
             </ul>
             <div className="mt-4 flex items-center gap-2 text-secondary">
-              <Link
+              <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -42,8 +45,8 @@ export function Footer() {
                 className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
               >
                 <InstagramIcon fontSize="small" />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://wa.me/5522998959800"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -51,8 +54,8 @@ export function Footer() {
                 className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
               >
                 <WhatsAppIcon fontSize="small" />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -60,8 +63,8 @@ export function Footer() {
                 className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
               >
                 <YouTubeIcon fontSize="small" />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -69,7 +72,7 @@ export function Footer() {
                 className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
               >
                 <MusicNoteIcon fontSize="small" />
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -156,7 +159,7 @@ export function Footer() {
             .
           </p>
         </div>
-      </div>
+      </MotionReveal>
     </footer>
   );
 }

@@ -1,6 +1,7 @@
 import Caroussel from "@/components/Caroussel";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import { CategoryCard } from "@/components/CategoryCard";
+import { MotionReveal } from "@/components/motion/Reveal";
 
 export default function Home() {
   const categories = [
@@ -35,7 +36,9 @@ export default function Home() {
   return (
     <>
       <section>
-        <Caroussel />
+        <MotionReveal amount={0.12}>
+          <Caroussel />
+        </MotionReveal>
       </section>
 
       <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 bg-white py-16">
@@ -51,9 +54,11 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(199,193,230,0.35),transparent_45%),radial-gradient(circle_at_80%_75%,rgba(143,132,198,0.22),transparent_45%)]" />
 
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-8 px-4 sm:px-6 lg:px-8">
-          <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary text-xl md:text-4xl">
-            MODA FITNESS
-          </p>
+          <MotionReveal>
+            <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary text-xl md:text-4xl">
+              MODA FITNESS
+            </p>
+          </MotionReveal>
 
           <div className="grid w-full gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {categories.map((category, index) => (

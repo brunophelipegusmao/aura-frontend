@@ -54,6 +54,7 @@ export function Header() {
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-3 sm:h-[4.5rem] sm:px-6 lg:px-8">
           <Link
             href="/"
+            prefetch={false}
             aria-label="Aura Activewear Home"
             className="shrink-0 transition-opacity hover:opacity-90"
           >
@@ -74,6 +75,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={false}
                   className={`rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
                     active
                       ? "bg-paper text-secondary"
@@ -89,6 +91,7 @@ export function Header() {
           <div className="hidden lg:block">
             <Link
               href="/login"
+              prefetch={false}
               className="inline-flex items-center gap-1.5 rounded-full border border-paper/35 bg-paper/10 px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-paper hover:text-secondary"
             >
               <LoginRoundedIcon fontSize="small" />
@@ -134,6 +137,7 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={false}
                     onClick={() => setIsMenuOpen(false)}
                     className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition-colors ${
                       active
@@ -153,6 +157,7 @@ export function Header() {
 
               <Link
                 href="/login"
+                prefetch={false}
                 onClick={() => setIsMenuOpen(false)}
                 className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl bg-secondary px-4 py-3 text-sm font-bold uppercase tracking-[0.08em] text-paper"
               >
@@ -173,6 +178,7 @@ export function Header() {
               <Link
                 key={`mobile-tab-${item.href}`}
                 href={item.href}
+                prefetch={false}
                 className={`flex flex-col items-center justify-center rounded-xl px-2 py-1.5 text-[11px] font-semibold tracking-wide transition-colors ${
                   active
                     ? "bg-primary-soft/55 text-secondary"

@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { ProductCatalogCard } from "@/components/ProductCatalogCard";
+import {
+  MotionReveal,
+  MotionStagger,
+  MotionStaggerItem,
+} from "@/components/motion/Reveal";
 import type { MockColor } from "../../../mock/catalog";
 import { mockProducts } from "../../../mock/catalog";
 
@@ -535,7 +540,7 @@ export default function ProductsPage() {
   return (
     <>
       <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-8 sm:py-10 md:py-12">
-        <div className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8">
+        <MotionReveal className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8">
           <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
             AURA ACTIVEWEAR
           </p>
@@ -546,11 +551,11 @@ export default function ProductsPage() {
             Navegue por coleção, cor, tamanho e faixa de preço para montar seu
             look com o melhor do tema Aura.
           </p>
-        </div>
+        </MotionReveal>
       </section>
 
       <section className="py-6 md:py-10">
-        <div className="rounded-3xl border border-secondary/20 bg-paper/82 p-3 shadow-[0_12px_30px_rgba(11,11,15,0.08)] backdrop-blur-sm sm:p-5">
+        <MotionReveal className="rounded-3xl border border-secondary/20 bg-paper/82 p-3 shadow-[0_12px_30px_rgba(11,11,15,0.08)] backdrop-blur-sm sm:p-5">
           <div className="sticky top-[4rem] z-30 -mx-3 mb-3 border-y border-secondary/15 bg-paper/95 px-3 py-3 backdrop-blur sm:top-[4.5rem] sm:-mx-5 sm:px-5 md:static md:mx-0 md:mb-0 md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div className="w-full max-w-2xl">
@@ -725,7 +730,7 @@ export default function ProductsPage() {
             </aside>
 
             <div>
-              <div className="mb-3 flex items-center justify-between gap-2 rounded-2xl border border-secondary/20 bg-primary-soft/25 px-3 py-3 sm:mb-4 sm:px-4">
+              <MotionReveal className="mb-3 flex items-center justify-between gap-2 rounded-2xl border border-secondary/20 bg-primary-soft/25 px-3 py-3 sm:mb-4 sm:px-4">
                 <p className="text-sm font-semibold text-secondary">
                   {filteredProducts.length} produto
                   {filteredProducts.length === 1 ? "" : "s"} encontrado
@@ -740,14 +745,20 @@ export default function ProductsPage() {
                     Resetar filtros
                   </button>
                 ) : null}
-              </div>
+              </MotionReveal>
 
               {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <MotionStagger
+                  className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                  staggerChildren={0.05}
+                  amount={0.1}
+                >
                   {filteredProducts.map((product) => (
-                    <ProductCatalogCard key={product.id} product={product} />
+                    <MotionStaggerItem key={product.id} y={10} duration={0.32}>
+                      <ProductCatalogCard product={product} />
+                    </MotionStaggerItem>
                   ))}
-                </div>
+                </MotionStagger>
               ) : (
                 <div className="rounded-2xl border border-dashed border-secondary/35 bg-paper py-14 text-center">
                   <p className="font-roboto text-lg font-black uppercase tracking-wide text-secondary">
@@ -767,7 +778,7 @@ export default function ProductsPage() {
               )}
             </div>
           </div>
-        </div>
+        </MotionReveal>
       </section>
 
       {isMobileFiltersOpen ? (

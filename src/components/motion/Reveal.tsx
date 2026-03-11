@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
-const easeOutSoft: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const easeOutSoft: [number, number, number, number] = [0.2, 1, 0.3, 1];
 
 type MotionRevealProps = {
   children: ReactNode;
@@ -33,9 +33,9 @@ export function MotionReveal({
   children,
   className,
   delay = 0,
-  duration = 0.45,
-  y = 18,
-  amount = 0.2,
+  duration = 0.36,
+  y = 12,
+  amount = 0.14,
 }: MotionRevealProps) {
   const reduceMotion = useReducedMotion();
 
@@ -59,9 +59,9 @@ export function MotionReveal({
 export function MotionStagger({
   children,
   className,
-  staggerChildren = 0.08,
+  staggerChildren = 0.05,
   delayChildren = 0,
-  amount = 0.2,
+  amount = 0.14,
 }: MotionStaggerProps) {
   const reduceMotion = useReducedMotion();
 
@@ -93,8 +93,8 @@ export function MotionStagger({
 export function MotionStaggerItem({
   children,
   className,
-  duration = 0.4,
-  y = 14,
+  duration = 0.32,
+  y = 10,
 }: MotionStaggerItemProps) {
   const reduceMotion = useReducedMotion();
 

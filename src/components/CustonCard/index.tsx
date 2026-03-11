@@ -1,6 +1,4 @@
-import React from "react";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
+import Image from "next/image";
 import Link from "next/link";
 
 type CustomCardProps = {
@@ -13,6 +11,8 @@ type CustomCardProps = {
     md: number;
   };
   borderRadius?: number;
+  sizes?: string;
+  priority?: boolean;
 };
 
 const CustomCard = ({
@@ -21,26 +21,37 @@ const CustomCard = ({
   href,
   mediaHeight = { xs: 280, sm: 420, md: 540 },
   borderRadius = 0,
+  sizes = "100vw",
+  priority = false,
 }: CustomCardProps) => {
+  const heightStyle = `clamp(${mediaHeight.xs}px, 52vw, ${mediaHeight.md}px)`;
+
   const content = (
-    <Card
-      sx={{
+    <div
+      className="overflow-hidden"
+      style={{
         borderRadius,
-        overflow: "hidden",
-        boxShadow: "none",
       }}
     >
-      <CardMedia
-        component="img"
-        image={url}
-        alt={alt}
-        sx={{
-          width: "100%",
-          height: mediaHeight,
-          objectFit: "cover",
+      <div
+        className="relative w-full"
+        style={{
+          height: heightStyle,
+          maxHeight: `${mediaHeight.md}px`,
+          minHeight: `${mediaHeight.xs}px`,
         }}
-      />
-    </Card>
+      >
+        <Image
+          src={url}
+          alt={alt}
+          fill
+          sizes={sizes}
+          priority={priority}
+          quality={72}
+          className="object-cover"
+        />
+      </div>
+    </div>
   );
 
   if (!href) {

@@ -81,17 +81,17 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-8 sm:py-10">
-        <MotionReveal className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8">
-          <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
+      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-6 sm:py-7 md:py-8">
+        <MotionReveal className="mx-auto w-full max-w-[1520px] px-4 sm:px-6 lg:px-10 2xl:px-12">
+          <p className="font-roboto text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/85">
             CONTATO
           </p>
-          <h1 className="font-roboto mt-2 text-2xl font-black uppercase tracking-[0.12em] text-ink sm:text-3xl md:text-5xl">
+          <h1 className="font-roboto mt-2 text-2xl font-bold tracking-[-0.015em] text-ink sm:text-[2rem] md:text-[2.45rem]">
             Fale com a Aura
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-muted md:text-base">
-            Estamos prontas para te ajudar com pedidos, trocas, revenda e
-            suporte geral.
+          <p className="mt-2.5 max-w-xl text-sm text-muted md:text-[0.95rem]">
+            Nosso time responde com agilidade para pedidos, trocas e dúvidas de
+            produto.
           </p>
         </MotionReveal>
       </section>
@@ -130,7 +130,7 @@ export default function ContactPage() {
         <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_minmax(0,1fr)] lg:gap-6">
           <MotionReveal>
             <article className="rounded-3xl border border-secondary/20 bg-paper p-4 shadow-[0_14px_34px_rgba(11,11,15,0.1)] sm:p-5">
-              <h2 className="font-roboto text-lg font-black uppercase tracking-[0.1em] text-secondary sm:text-2xl">
+              <h2 className="font-roboto text-lg font-bold tracking-[-0.01em] text-secondary sm:text-2xl">
                 Envie sua mensagem
               </h2>
               <p className="mt-2 text-sm text-muted">
@@ -234,7 +234,7 @@ export default function ContactPage() {
           <MotionStagger className="space-y-4" staggerChildren={0.07}>
             <MotionStaggerItem>
               <article className="rounded-3xl border border-secondary/20 bg-paper p-4 shadow-[0_10px_24px_rgba(11,11,15,0.08)] sm:p-5">
-                <h3 className="font-roboto text-sm font-black uppercase tracking-[0.12em] text-secondary">
+                <h3 className="font-roboto text-sm font-bold tracking-[0.01em] text-secondary">
                   Informacoes
                 </h3>
                 <ul className="mt-4 space-y-3 text-sm text-muted">
@@ -265,7 +265,7 @@ export default function ContactPage() {
 
             <MotionStaggerItem>
               <article className="rounded-3xl border border-secondary/20 bg-paper p-4 shadow-[0_10px_24px_rgba(11,11,15,0.08)] sm:p-5">
-                <h3 className="font-roboto text-sm font-black uppercase tracking-[0.12em] text-secondary">
+                <h3 className="font-roboto text-sm font-bold tracking-[0.01em] text-secondary">
                   Duvidas frequentes
                 </h3>
                 <div className="mt-3 space-y-2">

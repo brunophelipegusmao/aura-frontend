@@ -35,12 +35,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${nunito.variable} ${roboto.variable} antialiased bg-accent`}
+        className={`${nunito.variable} ${roboto.variable} antialiased`}
       >
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SwupProvider />
           <IntroLoader />
-          <main className="min-h-screen bg-accent pb-20 md:pb-0">
+          <main className="min-h-screen pb-20 md:pb-0">
             <Header />
             <div id="swup" className="transition-reveal">
               <Container>{children}</Container>

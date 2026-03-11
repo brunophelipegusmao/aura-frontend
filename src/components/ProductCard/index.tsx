@@ -1,4 +1,3 @@
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,57 +6,79 @@ type ProductCardProps = {
   alt: string;
   title: string;
   reference: string;
+  price: number;
+  compareAtPrice?: number;
+  badgeLabel?: string;
   ctaLabel?: string;
   href?: string;
 };
+
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
 
 export function ProductCard({
   imageUrl,
   alt,
   title,
   reference,
+  price,
+  compareAtPrice,
+  badgeLabel,
   ctaLabel = "EU QUERO",
   href,
 }: ProductCardProps) {
   return (
-    <article className="group relative overflow-hidden rounded-sm bg-paper">
-      <div className="relative h-[340px] w-full md:h-[520px]">
+    <article className="group overflow-hidden rounded-xl border border-secondary/15 bg-paper shadow-[0_10px_22px_rgba(11,11,15,0.08)]">
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-primary-soft/30">
         <Image
           src={imageUrl}
           alt={alt}
           fill
+          quality={72}
           sizes="(max-width: 768px) 50vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
+
+        {badgeLabel ? (
+          <span className="absolute left-3 top-3 z-10 rounded-full border border-paper/70 bg-paper/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-secondary">
+            {badgeLabel}
+          </span>
+        ) : null}
       </div>
 
-      <button
-        type="button"
-        aria-label={`Favoritar ${title}`}
-        className="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-paper/85 text-muted backdrop-blur-sm transition hover:bg-paper hover:text-secondary"
-      >
-        <FavoriteBorderIcon fontSize="small" />
-      </button>
+      <div className="space-y-3 p-3 md:p-4">
+        <div className="space-y-1">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-ink md:text-base">
+            {title}
+          </h3>
+          <p className="line-clamp-1 text-[11px] text-muted md:text-xs">{reference}</p>
+        </div>
 
-      <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-3 pb-3 pt-14">
-        <p className="w-fit bg-ink px-2 py-1 text-[11px] leading-tight text-paper md:text-xs">
-          {title}
-        </p>
-        <p className="mt-1 w-fit bg-ink/90 px-2 py-1 text-[11px] text-paper/90">
-          {reference}
-        </p>
+        <div className="flex items-end gap-2">
+          <p className="text-base font-black text-ink md:text-lg">
+            {currencyFormatter.format(price)}
+          </p>
+          {compareAtPrice && compareAtPrice > price ? (
+            <p className="pb-0.5 text-[11px] text-muted line-through md:text-xs">
+              {currencyFormatter.format(compareAtPrice)}
+            </p>
+          ) : null}
+        </div>
+
         {href ? (
           <Link
             href={href}
             prefetch={false}
-            className="mt-3 block w-full bg-ink py-2 text-center text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-secondary"
+            className="block w-full rounded-lg bg-ink py-2.5 text-center text-xs font-semibold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-secondary md:text-sm"
           >
             {ctaLabel}
           </Link>
         ) : (
           <button
             type="button"
-            className="mt-3 w-full bg-ink py-2 text-sm font-semibold tracking-wide text-paper transition-colors hover:bg-secondary"
+            className="w-full rounded-lg bg-ink py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-secondary md:text-sm"
           >
             {ctaLabel}
           </button>

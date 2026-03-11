@@ -147,6 +147,12 @@ export default function Caroussel({
                     url={item.imageUrl}
                     alt={item.alt}
                     href={item.href}
+                    sizes={
+                      normalizedItemsPerSlide === 1
+                        ? "100vw"
+                        : "(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 25vw"
+                    }
+                    priority={normalizedItemsPerSlide === 1 && slideIndex === 0}
                     mediaHeight={
                       normalizedItemsPerSlide === 1
                         ? mediaHeight

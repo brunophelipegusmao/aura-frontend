@@ -114,16 +114,16 @@ export default function CollectionsPage() {
 
   return (
     <>
-      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-8 sm:py-10">
-        <MotionReveal className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8">
-          <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
+      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-6 sm:py-7 md:py-8">
+        <MotionReveal className="mx-auto w-full max-w-[1520px] px-4 sm:px-6 lg:px-10 2xl:px-12">
+          <p className="font-roboto text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/85">
             AURA ACTIVEWEAR
           </p>
-          <h1 className="font-roboto mt-2 text-2xl font-black uppercase tracking-[0.12em] text-ink sm:text-3xl md:text-5xl">
+          <h1 className="font-roboto mt-2 text-2xl font-bold tracking-[-0.015em] text-ink sm:text-[2rem] md:text-[2.45rem]">
             Colecoes
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-muted md:text-base">
-            Navegue pelas capsulas da marca e encontre o estilo ideal para seu
+          <p className="mt-2.5 max-w-xl text-sm text-muted md:text-[0.95rem]">
+            Explore as capsulas da Aura e encontre a linha que acompanha o seu
             ritmo.
           </p>
         </MotionReveal>
@@ -177,7 +177,7 @@ export default function CollectionsPage() {
         </MotionStagger>
 
         <MotionStagger
-          className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 xl:grid-cols-3"
+          className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
           staggerChildren={0.06}
           amount={0.1}
         >
@@ -198,7 +198,7 @@ export default function CollectionsPage() {
                       alt={collection.imageAlt}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                      className="object-cover transition-transform duration-400 ease-out group-hover:scale-[1.025]"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-4 pb-4 pt-12">
                       <p className="font-roboto text-[11px] font-semibold uppercase tracking-[0.14em] text-paper/80">

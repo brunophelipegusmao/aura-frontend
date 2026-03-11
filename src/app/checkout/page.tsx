@@ -27,13 +27,15 @@ type CheckoutFormState = {
   notes: string;
 };
 
+type CheckoutField = keyof CheckoutFormState;
+
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
 });
 
-const inputClassName =
-  "w-full rounded-xl border border-secondary/20 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-secondary";
+const baseInputClassName =
+  "w-full rounded-xl border px-3 py-2 text-sm text-ink outline-none transition";
 
 const initialFormState: CheckoutFormState = {
   name: "",
@@ -50,6 +52,26 @@ const initialFormState: CheckoutFormState = {
   notes: "",
 };
 
+const requiredFields: CheckoutField[] = [
+  "name",
+  "email",
+  "phone",
+  "zipCode",
+  "street",
+  "number",
+  "neighborhood",
+  "city",
+  "state",
+];
+
+const stepLabels = ["Contato", "Entrega", "Pagamento", "Revisao"];
+
+const getOnlyDigits = (value: string) => value.replace(/\D/g, "");
+
+const isValidEmail = (value: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const cart = useCartStore();
@@ -59,6 +81,10 @@ export default function CheckoutPage() {
   const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>("sedex");
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<Partial<Record<CheckoutField, boolean>>>(
+    {},
+  );
 
   const itemsCount = getCartItemsCount(cart);
   const subtotalAmount = getCartSubtotal(cart);
@@ -73,49 +99,89 @@ export default function CheckoutPage() {
 
   const totalAmount = subtotalAmount + shippingAmount;
 
-  const handleFormFieldChange = (field: keyof CheckoutFormState, value: string) => {
+  const fieldErrors = useMemo<Record<CheckoutField, string | null>>(() => {
+    const zipDigits = getOnlyDigits(formState.zipCode);
+    const phoneDigits = getOnlyDigits(formState.phone);
+
+    return {
+      name: formState.name.trim() ? null : "Informe seu nome completo.",
+      email: isValidEmail(formState.email.trim()) ? null : "Informe um e-mail valido.",
+      phone:
+        phoneDigits.length >= 10
+          ? null
+          : "Informe um telefone com DDD.",
+      document: null,
+      zipCode: zipDigits.length === 8 ? null : "Informe um CEP valido com 8 digitos.",
+      street: formState.street.trim() ? null : "Informe a rua ou avenida.",
+      number: formState.number.trim() ? null : "Informe o numero do endereco.",
+      neighborhood: formState.neighborhood.trim() ? null : "Informe o bairro.",
+      city: formState.city.trim() ? null : "Informe a cidade.",
+      state:
+        formState.state.trim().length >= 2
+          ? null
+          : "Informe a UF com 2 letras.",
+      complement: null,
+      notes: null,
+    };
+  }, [formState]);
+
+  const handleFormFieldChange = (field: CheckoutField, value: string) => {
     setFormState((current) => ({
       ...current,
       [field]: value,
     }));
+
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
   };
 
-  const validateForm = () => {
-    if (cart.items.length === 0) {
-      return "Seu carrinho esta vazio.";
+  const markFieldAsTouched = (field: CheckoutField) => {
+    setTouchedFields((current) => ({
+      ...current,
+      [field]: true,
+    }));
+  };
+
+  const getFieldError = (field: CheckoutField) => {
+    const shouldShowError = submitAttempted || touchedFields[field];
+    if (!shouldShowError) {
+      return null;
     }
 
-    if (!formState.name.trim()) {
-      return "Informe o nome completo.";
-    }
+    return fieldErrors[field];
+  };
 
-    if (!formState.email.trim()) {
-      return "Informe o e-mail.";
-    }
+  const getInputClassName = (field: CheckoutField) => {
+    const hasError = !!getFieldError(field);
 
-    if (!formState.phone.trim()) {
-      return "Informe o telefone.";
-    }
-
-    if (!formState.zipCode.trim()) {
-      return "Informe o CEP.";
-    }
-
-    if (!formState.street.trim() || !formState.number.trim()) {
-      return "Informe endereco e numero.";
-    }
-
-    if (!formState.neighborhood.trim() || !formState.city.trim() || !formState.state.trim()) {
-      return "Informe bairro, cidade e estado.";
-    }
-
-    return null;
+    return `${baseInputClassName} ${
+      hasError
+        ? "border-rose-300 bg-rose-50/70 focus:border-rose-500"
+        : "border-secondary/20 bg-white focus:border-secondary"
+    }`;
   };
 
   const handleSubmitOrder = () => {
-    const validationError = validateForm();
-    if (validationError) {
-      setErrorMessage(validationError);
+    setSubmitAttempted(true);
+    setTouchedFields(
+      requiredFields.reduce<Partial<Record<CheckoutField, boolean>>>((accumulator, field) => {
+        accumulator[field] = true;
+        return accumulator;
+      }, {}),
+    );
+
+    if (cart.items.length === 0) {
+      setErrorMessage("Seu carrinho esta vazio.");
+      return;
+    }
+
+    const firstValidationError = requiredFields
+      .map((field) => fieldErrors[field])
+      .find((message) => !!message);
+
+    if (firstValidationError) {
+      setErrorMessage(firstValidationError);
       return;
     }
 
@@ -136,7 +202,7 @@ export default function CheckoutPage() {
         number: formState.number.trim(),
         neighborhood: formState.neighborhood.trim(),
         city: formState.city.trim(),
-        state: formState.state.trim(),
+        state: formState.state.trim().toUpperCase(),
         complement: formState.complement.trim(),
       },
       paymentMethod,
@@ -157,20 +223,31 @@ export default function CheckoutPage() {
 
       <div className="space-y-5">
         <header className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm md:p-7">
-          <p className="font-roboto text-xs font-black uppercase tracking-[0.2em] text-secondary">
-            FLUXO DE COMPRA
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+            Finalizacao do pedido
           </p>
-          <h1 className="font-roboto mt-2 text-2xl font-black uppercase tracking-[0.08em] text-ink md:text-3xl">
-            Checkout
+          <h1 className="mt-2 text-2xl font-black uppercase tracking-[0.08em] text-ink md:text-3xl">
+            Checkout Aura
           </h1>
           <p className="mt-2 text-sm text-muted md:text-base">
-            Preencha seus dados para concluir o pedido.
+            Preencha seus dados para confirmar pagamento, entrega e revisao final do pedido.
           </p>
+
+          <ol className="mt-4 grid gap-2 sm:grid-cols-4">
+            {stepLabels.map((label, index) => (
+              <li
+                key={`checkout-step-${label}`}
+                className="rounded-xl border border-secondary/20 bg-primary-soft/20 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-secondary"
+              >
+                {index + 1}. {label}
+              </li>
+            ))}
+          </ol>
         </header>
 
         {cart.items.length === 0 ? (
           <div className="rounded-3xl border border-secondary/20 bg-white p-8 text-center shadow-sm">
-            <h2 className="font-roboto text-xl font-black uppercase tracking-[0.1em] text-secondary">
+            <h2 className="text-xl font-black uppercase tracking-[0.1em] text-secondary">
               Carrinho vazio
             </h2>
             <p className="mt-2 text-sm text-muted">
@@ -179,312 +256,438 @@ export default function CheckoutPage() {
             <Link
               href="/products"
               prefetch={false}
-              className="mt-5 inline-flex rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-paper"
+              className="mt-5 aura-cta aura-cta-explorar"
             >
               Ir para produtos
             </Link>
           </div>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-            <section className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm">
-              <h2 className="font-roboto text-sm font-black uppercase tracking-[0.16em] text-secondary">
-                Dados para entrega
-              </h2>
-
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-name">
-                    Nome completo
-                  </label>
-                  <input
-                    id="checkout-name"
-                    className={inputClassName}
-                    value={formState.name}
-                    onChange={(event) => handleFormFieldChange("name", event.target.value)}
-                    placeholder="Seu nome"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-email">
-                    E-mail
-                  </label>
-                  <input
-                    id="checkout-email"
-                    type="email"
-                    className={inputClassName}
-                    value={formState.email}
-                    onChange={(event) => handleFormFieldChange("email", event.target.value)}
-                    placeholder="voce@email.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-phone">
-                    Telefone
-                  </label>
-                  <input
-                    id="checkout-phone"
-                    className={inputClassName}
-                    value={formState.phone}
-                    onChange={(event) => handleFormFieldChange("phone", event.target.value)}
-                    placeholder="(00) 00000-0000"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-document">
-                    CPF (opcional)
-                  </label>
-                  <input
-                    id="checkout-document"
-                    className={inputClassName}
-                    value={formState.document}
-                    onChange={(event) => handleFormFieldChange("document", event.target.value)}
-                    placeholder="000.000.000-00"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-zip-code">
-                    CEP
-                  </label>
-                  <input
-                    id="checkout-zip-code"
-                    className={inputClassName}
-                    value={formState.zipCode}
-                    onChange={(event) => handleFormFieldChange("zipCode", event.target.value)}
-                    placeholder="00000-000"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-street">
-                    Endereco
-                  </label>
-                  <input
-                    id="checkout-street"
-                    className={inputClassName}
-                    value={formState.street}
-                    onChange={(event) => handleFormFieldChange("street", event.target.value)}
-                    placeholder="Rua, avenida..."
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-number">
-                    Numero
-                  </label>
-                  <input
-                    id="checkout-number"
-                    className={inputClassName}
-                    value={formState.number}
-                    onChange={(event) => handleFormFieldChange("number", event.target.value)}
-                    placeholder="123"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-complement">
-                    Complemento
-                  </label>
-                  <input
-                    id="checkout-complement"
-                    className={inputClassName}
-                    value={formState.complement}
-                    onChange={(event) => handleFormFieldChange("complement", event.target.value)}
-                    placeholder="Apto, bloco..."
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-neighborhood">
-                    Bairro
-                  </label>
-                  <input
-                    id="checkout-neighborhood"
-                    className={inputClassName}
-                    value={formState.neighborhood}
-                    onChange={(event) =>
-                      handleFormFieldChange("neighborhood", event.target.value)
-                    }
-                    placeholder="Seu bairro"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-city">
-                    Cidade
-                  </label>
-                  <input
-                    id="checkout-city"
-                    className={inputClassName}
-                    value={formState.city}
-                    onChange={(event) => handleFormFieldChange("city", event.target.value)}
-                    placeholder="Sua cidade"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-state">
-                    Estado
-                  </label>
-                  <input
-                    id="checkout-state"
-                    className={inputClassName}
-                    value={formState.state}
-                    onChange={(event) => handleFormFieldChange("state", event.target.value)}
-                    placeholder="RJ"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                <div className="rounded-2xl border border-secondary/20 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted">
-                    Frete
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    <label className="flex items-center gap-2 text-sm text-ink">
-                      <input
-                        type="radio"
-                        name="shipping-method"
-                        className="accent-secondary"
-                        checked={shippingMethod === "sedex"}
-                        onChange={() => setShippingMethod("sedex")}
-                      />
-                      SEDEX ({currencyFormatter.format(24.9)})
+            <section className="space-y-4 rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm md:p-6">
+              <article className="rounded-2xl border border-secondary/15 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-secondary">
+                  1. Contato
+                </p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-name"
+                    >
+                      Nome completo
                     </label>
-                    <label className="flex items-center gap-2 text-sm text-ink">
-                      <input
-                        type="radio"
-                        name="shipping-method"
-                        className="accent-secondary"
-                        checked={shippingMethod === "pac"}
-                        onChange={() => setShippingMethod("pac")}
-                      />
-                      PAC ({currencyFormatter.format(16.9)})
+                    <input
+                      id="checkout-name"
+                      className={getInputClassName("name")}
+                      value={formState.name}
+                      onChange={(event) => handleFormFieldChange("name", event.target.value)}
+                      onBlur={() => markFieldAsTouched("name")}
+                      placeholder="Seu nome"
+                    />
+                    {getFieldError("name") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("name")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-email"
+                    >
+                      E-mail
                     </label>
+                    <input
+                      id="checkout-email"
+                      type="email"
+                      className={getInputClassName("email")}
+                      value={formState.email}
+                      onChange={(event) => handleFormFieldChange("email", event.target.value)}
+                      onBlur={() => markFieldAsTouched("email")}
+                      placeholder="voce@email.com"
+                    />
+                    {getFieldError("email") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("email")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-phone"
+                    >
+                      Telefone
+                    </label>
+                    <input
+                      id="checkout-phone"
+                      className={getInputClassName("phone")}
+                      value={formState.phone}
+                      onChange={(event) => handleFormFieldChange("phone", event.target.value)}
+                      onBlur={() => markFieldAsTouched("phone")}
+                      placeholder="(00) 00000-0000"
+                    />
+                    {getFieldError("phone") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("phone")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-document"
+                    >
+                      CPF (opcional)
+                    </label>
+                    <input
+                      id="checkout-document"
+                      className={getInputClassName("document")}
+                      value={formState.document}
+                      onChange={(event) => handleFormFieldChange("document", event.target.value)}
+                      placeholder="000.000.000-00"
+                    />
                   </div>
                 </div>
+              </article>
 
-                <div className="rounded-2xl border border-secondary/20 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted">
-                    Pagamento
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    <label className="flex items-center gap-2 text-sm text-ink">
-                      <input
-                        type="radio"
-                        name="payment-method"
-                        className="accent-secondary"
-                        checked={paymentMethod === "pix"}
-                        onChange={() => setPaymentMethod("pix")}
-                      />
-                      PIX
+              <article className="rounded-2xl border border-secondary/15 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-secondary">
+                  2. Endereco de entrega
+                </p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-zip-code"
+                    >
+                      CEP
                     </label>
-                    <label className="flex items-center gap-2 text-sm text-ink">
-                      <input
-                        type="radio"
-                        name="payment-method"
-                        className="accent-secondary"
-                        checked={paymentMethod === "card"}
-                        onChange={() => setPaymentMethod("card")}
-                      />
-                      Cartao
+                    <input
+                      id="checkout-zip-code"
+                      className={getInputClassName("zipCode")}
+                      value={formState.zipCode}
+                      onChange={(event) => handleFormFieldChange("zipCode", event.target.value)}
+                      onBlur={() => markFieldAsTouched("zipCode")}
+                      placeholder="00000-000"
+                    />
+                    {getFieldError("zipCode") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("zipCode")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-state"
+                    >
+                      Estado (UF)
                     </label>
-                    <label className="flex items-center gap-2 text-sm text-ink">
-                      <input
-                        type="radio"
-                        name="payment-method"
-                        className="accent-secondary"
-                        checked={paymentMethod === "boleto"}
-                        onChange={() => setPaymentMethod("boleto")}
-                      />
-                      Boleto
+                    <input
+                      id="checkout-state"
+                      className={getInputClassName("state")}
+                      value={formState.state}
+                      onChange={(event) => handleFormFieldChange("state", event.target.value)}
+                      onBlur={() => markFieldAsTouched("state")}
+                      placeholder="RJ"
+                    />
+                    {getFieldError("state") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("state")}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-street"
+                    >
+                      Endereco
                     </label>
+                    <input
+                      id="checkout-street"
+                      className={getInputClassName("street")}
+                      value={formState.street}
+                      onChange={(event) => handleFormFieldChange("street", event.target.value)}
+                      onBlur={() => markFieldAsTouched("street")}
+                      placeholder="Rua, avenida..."
+                    />
+                    {getFieldError("street") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("street")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-number"
+                    >
+                      Numero
+                    </label>
+                    <input
+                      id="checkout-number"
+                      className={getInputClassName("number")}
+                      value={formState.number}
+                      onChange={(event) => handleFormFieldChange("number", event.target.value)}
+                      onBlur={() => markFieldAsTouched("number")}
+                      placeholder="123"
+                    />
+                    {getFieldError("number") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("number")}</p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-complement"
+                    >
+                      Complemento (opcional)
+                    </label>
+                    <input
+                      id="checkout-complement"
+                      className={getInputClassName("complement")}
+                      value={formState.complement}
+                      onChange={(event) => handleFormFieldChange("complement", event.target.value)}
+                      placeholder="Apto, bloco..."
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-neighborhood"
+                    >
+                      Bairro
+                    </label>
+                    <input
+                      id="checkout-neighborhood"
+                      className={getInputClassName("neighborhood")}
+                      value={formState.neighborhood}
+                      onChange={(event) =>
+                        handleFormFieldChange("neighborhood", event.target.value)
+                      }
+                      onBlur={() => markFieldAsTouched("neighborhood")}
+                      placeholder="Seu bairro"
+                    />
+                    {getFieldError("neighborhood") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">
+                        {getFieldError("neighborhood")}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                      htmlFor="checkout-city"
+                    >
+                      Cidade
+                    </label>
+                    <input
+                      id="checkout-city"
+                      className={getInputClassName("city")}
+                      value={formState.city}
+                      onChange={(event) => handleFormFieldChange("city", event.target.value)}
+                      onBlur={() => markFieldAsTouched("city")}
+                      placeholder="Sua cidade"
+                    />
+                    {getFieldError("city") ? (
+                      <p className="mt-1 text-xs font-medium text-rose-700">{getFieldError("city")}</p>
+                    ) : null}
                   </div>
                 </div>
-              </div>
+              </article>
 
-              <div className="mt-4">
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="checkout-notes">
-                  Observacoes (opcional)
-                </label>
-                <textarea
-                  id="checkout-notes"
-                  className={`${inputClassName} min-h-24 resize-y`}
-                  value={formState.notes}
-                  onChange={(event) => handleFormFieldChange("notes", event.target.value)}
-                  placeholder="Informacoes adicionais para entrega"
-                />
-              </div>
+              <article className="rounded-2xl border border-secondary/15 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-secondary">
+                  3. Entrega e pagamento
+                </p>
+
+                <div className="mt-3 grid gap-4 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-secondary/15 bg-primary-soft/15 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted">
+                      Frete
+                    </p>
+                    <div className="mt-3 space-y-2">
+                      <label className="flex items-start gap-2 text-sm text-ink">
+                        <input
+                          type="radio"
+                          name="shipping-method"
+                          className="mt-0.5 accent-secondary"
+                          checked={shippingMethod === "sedex"}
+                          onChange={() => setShippingMethod("sedex")}
+                        />
+                        <span>
+                          SEDEX ({currencyFormatter.format(24.9)})
+                          <span className="mt-0.5 block text-xs text-muted">
+                            Prazo informado após confirmação
+                          </span>
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-2 text-sm text-ink">
+                        <input
+                          type="radio"
+                          name="shipping-method"
+                          className="mt-0.5 accent-secondary"
+                          checked={shippingMethod === "pac"}
+                          onChange={() => setShippingMethod("pac")}
+                        />
+                        <span>
+                          PAC ({currencyFormatter.format(16.9)})
+                          <span className="mt-0.5 block text-xs text-muted">
+                            Prazo informado após confirmação
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-secondary/15 bg-primary-soft/15 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted">
+                      Pagamento
+                    </p>
+                    <div className="mt-3 space-y-2">
+                      <label className="flex items-center gap-2 text-sm text-ink">
+                        <input
+                          type="radio"
+                          name="payment-method"
+                          className="accent-secondary"
+                          checked={paymentMethod === "pix"}
+                          onChange={() => setPaymentMethod("pix")}
+                        />
+                        PIX
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-ink">
+                        <input
+                          type="radio"
+                          name="payment-method"
+                          className="accent-secondary"
+                          checked={paymentMethod === "card"}
+                          onChange={() => setPaymentMethod("card")}
+                        />
+                        Cartao
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-ink">
+                        <input
+                          type="radio"
+                          name="payment-method"
+                          className="accent-secondary"
+                          checked={paymentMethod === "boleto"}
+                          onChange={() => setPaymentMethod("boleto")}
+                        />
+                        Boleto
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article className="rounded-2xl border border-secondary/15 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-secondary">
+                  4. Observacoes
+                </p>
+                <div className="mt-3">
+                  <label
+                    className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted"
+                    htmlFor="checkout-notes"
+                  >
+                    Instrucoes para entrega (opcional)
+                  </label>
+                  <textarea
+                    id="checkout-notes"
+                    className={`${getInputClassName("notes")} min-h-24 resize-y`}
+                    value={formState.notes}
+                    onChange={(event) => handleFormFieldChange("notes", event.target.value)}
+                    placeholder="Informacoes adicionais para facilitar a entrega"
+                  />
+                </div>
+              </article>
 
               {errorMessage ? (
-                <p className="mt-3 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+                <p className="rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-sm text-rose-700">
                   {errorMessage}
                 </p>
               ) : null}
             </section>
 
-            <aside className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm">
-              <h2 className="font-roboto text-sm font-black uppercase tracking-[0.16em] text-secondary">
-                Resumo do pedido
-              </h2>
+            <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
+              <section className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm">
+                <h2 className="text-sm font-black uppercase tracking-[0.16em] text-secondary">
+                  Resumo do pedido
+                </h2>
 
-              <div className="mt-3 space-y-2 border-b border-secondary/15 pb-3">
-                {cart.items.map((item) => (
-                  <p
-                    key={`checkout-item-${item.id}`}
-                    className="flex items-start justify-between gap-2 text-sm"
-                  >
-                    <span className="text-muted">
-                      {item.quantity}x {item.productName}
-                    </span>
+                <div className="mt-3 max-h-52 space-y-2 overflow-auto border-b border-secondary/15 pb-3 pr-1">
+                  {cart.items.map((item) => (
+                    <p
+                      key={`checkout-item-${item.id}`}
+                      className="flex items-start justify-between gap-2 text-sm"
+                    >
+                      <span className="text-muted">
+                        {item.quantity}x {item.productName}
+                      </span>
+                      <span className="font-semibold text-ink">
+                        {currencyFormatter.format(item.unitPrice * item.quantity)}
+                      </span>
+                    </p>
+                  ))}
+                </div>
+
+                <div className="mt-3 space-y-2 text-sm">
+                  <p className="flex items-center justify-between">
+                    <span className="text-muted">Itens ({itemsCount})</span>
                     <span className="font-semibold text-ink">
-                      {currencyFormatter.format(item.unitPrice * item.quantity)}
+                      {currencyFormatter.format(subtotalAmount)}
                     </span>
                   </p>
-                ))}
-              </div>
+                  <p className="flex items-center justify-between">
+                    <span className="text-muted">Frete</span>
+                    <span className="font-semibold text-ink">
+                      {currencyFormatter.format(shippingAmount)}
+                    </span>
+                  </p>
+                  <p className="flex items-center justify-between text-xs text-muted">
+                    <span>Entrega e rastreio</span>
+                    <span>Informados após confirmação</span>
+                  </p>
+                  <p className="flex items-center justify-between border-t border-secondary/15 pt-2">
+                    <span className="font-semibold text-ink">Total</span>
+                    <span className="text-lg font-black text-secondary">
+                      {currencyFormatter.format(totalAmount)}
+                    </span>
+                  </p>
+                </div>
 
-              <div className="mt-3 space-y-2 text-sm">
-                <p className="flex items-center justify-between">
-                  <span className="text-muted">Itens ({itemsCount})</span>
-                  <span className="font-semibold text-ink">
-                    {currencyFormatter.format(subtotalAmount)}
-                  </span>
-                </p>
-                <p className="flex items-center justify-between">
-                  <span className="text-muted">Frete</span>
-                  <span className="font-semibold text-ink">
-                    {currencyFormatter.format(shippingAmount)}
-                  </span>
-                </p>
-                <p className="flex items-center justify-between border-t border-secondary/15 pt-2">
-                  <span className="font-semibold text-ink">Total</span>
-                  <span className="text-lg font-black text-secondary">
-                    {currencyFormatter.format(totalAmount)}
-                  </span>
-                </p>
-              </div>
+                <button
+                  type="button"
+                  disabled={submitting}
+                  onClick={handleSubmitOrder}
+                  className="mt-5 aura-cta aura-cta-comprar w-full py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {submitting ? "Confirmando pedido..." : "Confirmar pedido"}
+                </button>
 
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={handleSubmitOrder}
-                className="mt-5 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {submitting ? "Processando..." : "Confirmar pedido"}
-              </button>
+                <Link
+                  href="/cart"
+                  prefetch={false}
+                  className="mt-2 aura-cta aura-cta-considerar w-full text-sm"
+                >
+                  Voltar ao carrinho
+                </Link>
+              </section>
 
-              <Link
-                href="/cart"
-                prefetch={false}
-                className="mt-2 inline-flex w-full items-center justify-center rounded-xl border border-secondary/25 px-4 py-2 text-sm font-semibold text-secondary"
-              >
-                Voltar ao carrinho
-              </Link>
+              <section className="rounded-3xl border border-secondary/20 bg-white p-5 shadow-sm">
+                <h3 className="text-xs font-black uppercase tracking-[0.16em] text-secondary">
+                  Seguranca e confianca
+                </h3>
+                <ul className="mt-3 space-y-2 text-sm text-ink">
+                  <li className="rounded-xl border border-secondary/15 bg-primary-soft/15 px-3 py-2">
+                    Revise seus dados antes de confirmar o pedido.
+                  </li>
+                  <li className="rounded-xl border border-secondary/15 bg-primary-soft/15 px-3 py-2">
+                    Politica de troca disponivel para consulta no atendimento.
+                  </li>
+                  <li className="rounded-xl border border-secondary/15 bg-primary-soft/15 px-3 py-2">
+                    Canais oficiais da marca para duvidas do pedido.
+                  </li>
+                </ul>
+              </section>
             </aside>
           </div>
         )}

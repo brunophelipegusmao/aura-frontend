@@ -10,6 +10,7 @@ type CategoryCardProps = {
   title: string;
   subtitle?: string;
   href?: string;
+  ctaLabel?: string;
   index?: number;
 };
 
@@ -19,47 +20,45 @@ export function CategoryCard({
   title,
   subtitle,
   href,
+  ctaLabel = "Ver produtos",
   index = 0,
 }: CategoryCardProps) {
-  const isLongTitle = title.length > 6;
-
   const content = (
     <motion.article
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
-      whileHover={{ y: -8, scale: 1.01 }}
-      className="group relative overflow-hidden rounded-xl border border-white/30 bg-white/50 shadow-[0_10px_30px_rgba(11,11,15,0.12)] backdrop-blur-sm"
+      transition={{ duration: 0.4, delay: index * 0.06, ease: "easeOut" }}
+      whileHover={{ y: -4 }}
+      className="group overflow-hidden rounded-2xl border border-secondary/20 bg-paper shadow-[0_12px_30px_rgba(11,11,15,0.1)]"
     >
-      <div className="relative h-[320px] w-full md:h-[360px]">
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-primary-soft/35">
         <Image
           src={imageUrl}
           alt={alt}
           fill
           sizes="(max-width: 768px) 50vw, 25vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
+
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent px-4 pb-4 pt-12">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-paper/80">
+            Categoria
+          </p>
+          <h3 className="font-roboto mt-1 text-xl font-black uppercase tracking-[0.1em] text-paper sm:text-2xl">
+            {title}
+          </h3>
+        </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-      <div className="absolute inset-y-0 right-0 flex items-center justify-end bg-gradient-to-l from-black/65 via-black/35 to-transparent px-3">
-        <p
-          className={`font-roboto [writing-mode:vertical-rl] [text-orientation:upright] font-black text-paper drop-shadow-[0_6px_10px_rgba(110,99,168,0.55)] ${
-            isLongTitle
-              ? "text-lg tracking-[0.16em] md:text-2xl"
-              : "text-2xl tracking-[0.22em] md:text-4xl"
-          }`}
-        >
-          {title}
+      <div className="space-y-3 p-4 sm:p-5">
+        <p className="text-sm leading-relaxed text-muted">
+          {subtitle ?? "Modelagens premium para treino com conforto e presença."}
         </p>
+        <span className="inline-flex w-full items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-paper transition-colors group-hover:bg-secondary">
+          {ctaLabel}
+        </span>
       </div>
-
-      {subtitle ? (
-        <p className="font-roboto absolute bottom-3 left-3 z-20 rounded-md bg-black/45 px-2 py-1 text-sm font-semibold tracking-wide text-paper drop-shadow-[0_3px_8px_rgba(110,99,168,0.45)] backdrop-blur-sm">
-          {subtitle}
-        </p>
-      ) : null}
     </motion.article>
   );
 

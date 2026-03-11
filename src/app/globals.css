@@ -20,8 +20,6 @@
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
   font-family: var(--font-nunito), sans-serif;
 }
 
@@ -33,6 +31,58 @@ body {
 
 .font-roboto {
   font-family: var(--font-roboto), sans-serif;
+}
+
+.aura-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 0.58rem 1rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.aura-cta:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+.aura-cta-explorar {
+  border: 1px solid rgba(110, 99, 168, 0.35);
+  background: rgba(199, 193, 230, 0.25);
+  color: var(--color-secondary);
+}
+
+.aura-cta-explorar:hover {
+  background: rgba(199, 193, 230, 0.38);
+}
+
+.aura-cta-considerar {
+  border: 1px solid rgba(110, 99, 168, 0.3);
+  background: transparent;
+  color: var(--color-secondary);
+}
+
+.aura-cta-considerar:hover {
+  background: rgba(199, 193, 230, 0.2);
+}
+
+.aura-cta-comprar {
+  border: 1px solid var(--color-secondary);
+  background: var(--color-secondary);
+  color: var(--color-paper);
+}
+
+.aura-cta-comprar:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 html {
@@ -54,7 +104,7 @@ html {
 }
 
 html.is-changing .transition-reveal {
-  transition: clip-path 1s cubic-bezier(0.5, 0, 0.15, 1);
+  transition: clip-path 720ms cubic-bezier(0.25, 0.9, 0.3, 1);
 }
 
 html.is-changing.to-circle .transition-reveal {
@@ -75,7 +125,7 @@ html.intro-loading #swup.transition-reveal {
 }
 
 html.intro-revealing #swup.transition-reveal {
-  transition: clip-path 1s cubic-bezier(0.5, 0, 0.15, 1);
+  transition: clip-path 720ms cubic-bezier(0.25, 0.9, 0.3, 1);
   clip-path: circle(150% at 50% 50%);
 }
 
@@ -124,7 +174,7 @@ html.intro-revealing #swup.transition-reveal {
   height: auto;
   width: 8.25rem;
   filter: drop-shadow(0 10px 18px rgba(11, 11, 15, 0.25));
-  animation: intro-logo-pulse 1.15s ease-in-out infinite alternate;
+  animation: intro-logo-pulse 1.35s ease-in-out infinite alternate;
 }
 
 .intro-loader.is-revealing .intro-loader__logo {
@@ -138,10 +188,10 @@ html.intro-revealing #swup.transition-reveal {
 
 @keyframes intro-logo-pulse {
   from {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0) scale(0.995);
   }
   to {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-1.5px) scale(1.008);
   }
 }
 

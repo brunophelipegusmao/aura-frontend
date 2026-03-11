@@ -1,163 +1,173 @@
+import Link from "next/link";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import YouTubeIcon from "@mui/icons-material/YouTube";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { MotionReveal } from "@/components/motion/Reveal";
 
 export function Footer() {
   return (
-    <footer className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-t border-secondary/25 bg-gradient-to-b from-accent/70 via-primary-soft/40 to-paper text-ink">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(255,255,255,0.7),transparent_42%),radial-gradient(circle_at_88%_80%,rgba(110,99,168,0.16),transparent_44%)]" />
+    <footer className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-t border-secondary/20 bg-paper text-ink">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_12%,rgba(199,193,230,0.2),transparent_42%)]" />
 
       <MotionReveal
-        className="relative mx-auto w-full max-w-6xl px-4 pb-8 pt-14 sm:px-6 lg:px-8"
+        className="relative mx-auto w-full max-w-6xl px-4 pb-8 pt-12 sm:px-6 lg:px-8"
         amount={0.08}
       >
-        <div className="text-center">
-          <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
-            AURA ACTIVEWEAR
-          </p>
-          <h2 className="font-roboto mt-2 text-3xl font-black uppercase tracking-[0.16em] text-ink md:text-4xl">
-            Essência em Movimento
-          </h2>
-          <p className="mx-auto mt-3 max-w-3xl text-sm text-muted md:text-base">
-            Moda fitness com tecnologia, conforto e identidade para mulheres
-            que treinam com atitude.
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-8 border-t border-secondary/20 pt-8 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-10 grid gap-8 border-t border-secondary/15 pt-8 sm:grid-cols-2 lg:grid-cols-5">
           <div className="min-w-0">
-            <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
+            <h3 className="text-sm font-semibold text-secondary md:text-base">
               Atendimento
             </h3>
-            <ul className="mt-3 space-y-1.5 break-words text-sm text-muted">
-              <li>Seg a Sex 09h às 18h</li>
+            <ul className="mt-3 space-y-2 break-words text-sm leading-relaxed text-muted">
+              <li>Segunda a sexta, das 9h às 18h</li>
               <li>WhatsApp: (22) 99895-9800</li>
               <li>contato@auraactivewear.com.br</li>
+              <li>Atendimento por ordem de chegada</li>
             </ul>
-            <div className="mt-4 flex items-center gap-2 text-secondary">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
-              >
-                <InstagramIcon fontSize="small" />
-              </a>
-              <a
-                href="https://wa.me/5522998959800"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-                className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
-              >
-                <WhatsAppIcon fontSize="small" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
-              >
-                <YouTubeIcon fontSize="small" />
-              </a>
-              <a
-                href="https://tiktok.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                className="rounded-full p-2 transition-colors hover:bg-primary-soft/70"
-              >
-                <MusicNoteIcon fontSize="small" />
-              </a>
-            </div>
-          </div>
-
-          <div className="min-w-0">
-            <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
-              Pedidos e Entregas
-            </h3>
-            <ul className="mt-3 space-y-1.5 text-sm text-muted">
-              <li>Acompanhar Pedido</li>
-              <li>Trocas e Devoluções</li>
-              <li>Prazos de Entrega</li>
-              <li>Histórico de Pedido</li>
-            </ul>
-          </div>
-
-          <div className="min-w-0">
-            <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
-              Quer Ajuda?
-            </h3>
-            <ul className="mt-3 space-y-1.5 text-sm text-muted">
-              <li>Contato por E-mail</li>
-              <li>Auto Atendimento</li>
-              <li>Trabalhe Conosco</li>
-            </ul>
-          </div>
-
-          <div className="min-w-0">
-            <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
-              Seja um Revendedor
-            </h3>
-            <p className="mt-3 text-sm text-muted">
-              Cadastre-se para revender Aura Activewear e tenha condições
-              especiais para sua loja.
-            </p>
-            <button
-              type="button"
-              className="mt-4 rounded-md bg-secondary px-4 py-2 text-sm font-bold text-paper transition-colors hover:bg-primary"
+            <Link
+              href="/contact"
+              prefetch={false}
+              className="mt-4 inline-flex aura-cta aura-cta-considerar"
             >
-              Quero Revender
-            </button>
+              Central de atendimento
+            </Link>
           </div>
 
           <div className="min-w-0">
-            <h3 className="font-roboto text-base font-black tracking-wide text-secondary md:text-lg">
-              Compre com Segurança
+            <h3 className="text-sm font-semibold text-secondary md:text-base">
+              Políticas
             </h3>
-            <div className="mt-3 grid gap-2">
-              <div className="rounded-md border border-secondary/25 bg-primary-soft/40 px-3 py-2 text-sm font-semibold text-secondary">
-                SSL Ativo
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+              <li>Condições de troca conforme política vigente</li>
+              <li>Condições de envio e frete no checkout</li>
+              <li>Status do pedido informado no canal de compra</li>
+              <li>Pagamento via PIX, cartão e boleto</li>
+            </ul>
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-secondary md:text-base">
+              Institucional
+            </h3>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+              <li>
+                <Link
+                  href="/about"
+                  prefetch={false}
+                  className="hover:text-secondary"
+                >
+                  Sobre a Aura
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/collections"
+                  prefetch={false}
+                  className="hover:text-secondary"
+                >
+                  Coleções
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  prefetch={false}
+                  className="hover:text-secondary"
+                >
+                  Produtos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  prefetch={false}
+                  className="hover:text-secondary"
+                >
+                  Contato
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-secondary md:text-base">
+              Social
+            </h3>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+              <li className="flex items-center gap-2">
+                <InstagramIcon fontSize="small" className="text-secondary" />
+                <a
+                  href="https://instagram.com/auraactivewear"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-secondary"
+                >
+                  @auraactivewear
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <WhatsAppIcon fontSize="small" className="text-secondary" />
+                <a
+                  href="https://wa.me/5522998959800"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-secondary"
+                >
+                  WhatsApp de atendimento
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <MusicNoteIcon fontSize="small" className="text-secondary" />
+                <a
+                  href="https://www.tiktok.com/@auraactivewear"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-secondary"
+                >
+                  TikTok @auraactivewear
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-secondary md:text-base">
+              Pagamentos
+            </h3>
+            <div className="mt-3 space-y-3">
+              <div className="rounded-xl border border-secondary/20 bg-primary-soft/15 px-3 py-2 text-sm text-ink">
+                Revise os dados do pedido antes da confirmação final.
               </div>
-              <div className="rounded-md border border-secondary/25 bg-primary-soft/40 px-3 py-2 text-sm font-semibold text-secondary">
-                Compra 100% Segura
+              <div className="flex flex-wrap gap-2">
+                {["PIX", "VISA", "MASTERCARD", "ELO", "BOLETO"].map(
+                  (method) => (
+                    <span
+                      key={method}
+                      className="rounded-md border border-secondary/20 bg-white px-2 py-1 text-xs font-semibold text-secondary"
+                    >
+                      {method}
+                    </span>
+                  ),
+                )}
               </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="rounded bg-secondary px-2 py-1 text-xs font-bold text-paper">
-                  VISA
-                </span>
-                <span className="rounded bg-secondary px-2 py-1 text-xs font-bold text-paper">
-                  MASTERCARD
-                </span>
-                <span className="rounded bg-secondary px-2 py-1 text-xs font-bold text-paper">
-                  PIX
-                </span>
-                <span className="rounded bg-secondary px-2 py-1 text-xs font-bold text-paper">
-                  BOLETO
-                </span>
-              </div>
+              <Link
+                href="/products"
+                prefetch={false}
+                className="inline-flex aura-cta aura-cta-comprar"
+              >
+                Comprar agora
+              </Link>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 border-t border-secondary/25 pt-6 text-center text-sm text-muted">
-          <p>© 2026 Aura Activewear. Todos os direitos reservados.</p>
-          <p className="mt-2">
-            Projeto criado por{" "}
-            <a
-              href="https://mypage-two-jade.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-secondary underline-offset-2 hover:underline"
-            >
-              CoreLayer
-            </a>
-            .
-          </p>
+        <div className="mt-8 border-t border-secondary/20 pt-5 text-sm text-muted">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 Aura Activewear. Todos os direitos reservados.</p>
+            <p>
+              Moda fitness premium com foco em conforto, caimento e performance.
+            </p>
+          </div>
         </div>
       </MotionReveal>
     </footer>

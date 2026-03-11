@@ -48,17 +48,17 @@ const milestones = [
 export default function AboutPage() {
   return (
     <>
-      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-8 sm:py-10">
-        <MotionReveal className="mx-auto w-full max-w-6xl px-3 sm:px-6 lg:px-8">
-          <p className="font-roboto text-xs font-semibold tracking-[0.24em] text-secondary">
-            NOSSA HISTORIA
+      <section className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-secondary/15 bg-gradient-to-br from-paper via-accent/45 to-primary-soft/55 py-6 sm:py-7 md:py-8">
+        <MotionReveal className="mx-auto w-full max-w-[1520px] px-4 sm:px-6 lg:px-10 2xl:px-12">
+          <p className="font-roboto text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/85">
+            Nossa historia
           </p>
-          <h1 className="font-roboto mt-2 text-2xl font-black uppercase tracking-[0.12em] text-ink sm:text-3xl md:text-5xl">
+          <h1 className="font-roboto mt-2 text-2xl font-bold tracking-[-0.015em] text-ink sm:text-[2rem] md:text-[2.45rem]">
             Sobre a Aura
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-muted md:text-base">
-            Construimos moda fitness com tecnologia, movimento e uma estetica
-            autentica para mulheres ativas.
+          <p className="mt-2.5 max-w-xl text-sm text-muted md:text-[0.95rem]">
+            Moda fitness com identidade autoral, desempenho real e conforto
+            pensado para mulheres em movimento.
           </p>
         </MotionReveal>
       </section>
@@ -159,10 +159,10 @@ export default function AboutPage() {
         <MotionReveal className="rounded-3xl border border-secondary/20 bg-paper p-4 shadow-[0_12px_30px_rgba(11,11,15,0.08)] sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-roboto text-xs font-semibold tracking-[0.2em] text-secondary">
+              <p className="font-roboto text-[10px] font-semibold uppercase tracking-[0.14em] text-secondary/85">
                 TRAJETORIA
               </p>
-              <h2 className="font-roboto mt-1 text-xl font-black uppercase tracking-[0.1em] text-ink sm:text-2xl">
+              <h2 className="font-roboto mt-1 text-xl font-bold tracking-[-0.01em] text-ink sm:text-2xl">
                 Nossa evolucao
               </h2>
             </div>

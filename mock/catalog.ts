@@ -28,22 +28,22 @@ export type MockProduct = {
 export const mockHeroImages: MockImageAsset[] = [
   {
     id: "hero-1",
-    url: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=1600&q=80",
+    url: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=1600&q=70",
     alt: "Modelo com roupa esportiva Aura em estúdio",
   },
   {
     id: "hero-2",
-    url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80",
+    url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=70",
     alt: "Treino funcional com look fitness Aura",
   },
   {
     id: "hero-3",
-    url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1600&q=80",
+    url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1600&q=70",
     alt: "Atleta correndo com conjunto esportivo",
   },
   {
     id: "hero-4",
-    url: "https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=1600&q=80",
+    url: "https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=1600&q=70",
     alt: "Close em tecido técnico de activewear",
   },
 ];
